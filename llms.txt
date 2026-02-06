@@ -1,0 +1,96 @@
+# front-spa-radix
+
+> Chassi front-end SPA para projetos Epharma. Base pronta com design system, tema dark/light e componentes acessíveis.
+
+## Stack
+
+- React 19 com TypeScript
+- Vite 7 (bundler + dev server)
+- Tailwind CSS v4 (via @tailwindcss/vite plugin, sem tailwind.config)
+- shadcn/ui estilo radix-nova (componentes em src/components/ui/)
+- Radix UI primitives (acessibilidade built-in)
+- Lucide React (ícones)
+- Sonner (toasts)
+- next-themes (dark/light/system)
+- Biome (lint + format, substitui ESLint/Prettier)
+- pnpm (package manager)
+
+## Estrutura
+
+```
+src/
+├── components/
+│   ├── ui/           # Componentes shadcn/ui (NÃO editar manualmente)
+│   ├── theme-provider.tsx
+│   └── theme-toggle.tsx
+├── lib/
+│   └── utils.ts      # cn() helper (clsx + tailwind-merge)
+├── App.tsx            # Página showcase de componentes
+├── main.tsx           # Entry point com ThemeProvider + Toaster
+└── index.css          # Tokens de tema (CSS variables oklch) + Tailwind imports
+```
+
+## Convenções
+
+### Imports
+- Usar alias `@/` para imports de src/ (ex: `@/components/ui/button`)
+- Imports organizados pelo Biome automaticamente
+
+### Componentes UI
+- Componentes base ficam em `src/components/ui/` e são gerenciados pelo shadcn CLI
+- Para adicionar novos: `pnpm dlx shadcn@latest add [componente]`
+- NÃO editar arquivos em `src/components/ui/` diretamente — criar wrappers se precisar customizar
+- Componentes de app/negócio ficam em `src/components/` (fora de ui/)
+
+### Estilização
+- Usar Tailwind CSS v4 utility classes
+- Usar `cn()` de `@/lib/utils` para merge condicional de classes
+- Tokens de cor seguem padrão CSS variable: `bg-primary`, `text-muted-foreground`, etc.
+- Cores usam oklch (ver src/index.css para :root e .dark)
+- CVA (class-variance-authority) para variantes de componentes
+
+### Tema
+- ThemeProvider (next-themes) no main.tsx controla dark/light/system
+- Classe `.dark` no html root ativa variáveis do tema escuro
+- Persistência em localStorage (key: "ui-theme")
+
+### Lint e Formatação
+- `pnpm lint` — checa lint + format
+- `pnpm lint:fix` — corrige automaticamente
+- `pnpm format` — formata todos os arquivos
+- Biome config em biome.json
+- Indent: 2 espaços, aspas duplas, sem ponto-e-vírgula desnecessário
+- src/components/ui/ é ignorado pelo linter (gerenciado pelo shadcn)
+
+### TypeScript
+- Strict mode habilitado
+- Target ES2022, module ESNext
+- Path alias @/* → ./src/*
+
+## Comandos
+
+```bash
+pnpm dev        # Dev server (Vite)
+pnpm build      # Type check + build produção
+pnpm preview    # Preview do build
+pnpm lint       # Lint + format check (Biome)
+pnpm lint:fix   # Auto-fix lint + format
+pnpm format     # Format todos os arquivos
+```
+
+## Como criar novos componentes
+
+1. Componentes de UI base: usar shadcn CLI (`pnpm dlx shadcn@latest add [nome]`)
+2. Componentes de app: criar em `src/components/[nome].tsx`
+3. Usar `cn()` para classes condicionais
+4. Seguir padrão de export nomeado
+5. Props tipadas com interface/type, usar React.ComponentProps quando extender HTML elements
+
+## Notas para LLMs
+
+- Este é um SPA puro (client-side only), sem server runtime, sem SSR, sem API routes
+- Não há banco de dados, ORM ou backend — dados são mockados no client
+- O projeto é um chassi/boilerplate para ser clonado e customizado por equipe ou por agentes AI
+- Ao gerar código, seguir as convenções de import (@/), estilização (Tailwind + cn()) e componentização descritas acima
+- Não adicionar dependências de backend (Express, Prisma, etc.) — fora do escopo
+- Testar com `pnpm build` para validar TypeScript antes de considerar pronto
